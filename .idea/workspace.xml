@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="23516b4c-85bd-4712-8d93-766a990f36ed" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/source/_posts/Java基础/Java数据结构.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../test/src/main/java/Main.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../test/src/main/java/test.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../test/src/main/java/testlmpl1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/layout/_partial/social-link.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/layout/_partial/social-link.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/4.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/4.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/5.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/6.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/banner/6.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/reward/alipay.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/hexo-theme-matery/source/medias/reward/wechat.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +55,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\GithubProject\Small-funny.github.io\source\_posts\Java基础\Java数据结构" />
+    </key>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -37,5 +72,16 @@
       <updated>1625454640623</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
