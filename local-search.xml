@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>synchronized锁</title>
+    <link href="/2021/07/31/java-bing-fa/synchornized-suo/"/>
+    <url>/2021/07/31/java-bing-fa/synchornized-suo/</url>
+    
+    <content type="html"><![CDATA[<meta name="referrer" content="no-referrer"/><p>synchronized是Java中的关键字，由底层C/C++实现，本文大致记录一下个人对这个关键字的见解与学习记录</p><h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h2><p>synchronized，它可以保证线程安全中的原子性、可见性与有序性。</p><p>该锁属于可重入锁，也属于重量级锁，在jdk1.5之前相对于aqs实现的lock来说，加锁的资源消耗要大很多，在后来的优化中，它的效率也在不断提升，编码中我们仍然优先使用这种锁进行多线程场景下的操作</p><p>它的加锁基本原理是将任何一个非空对象设置为一个监视器，对作用域内的代码进行“监视”，也称为监视器锁</p><p>Java对象之所以能够被设置为监视器，主要源于它的结构特点</p><p><img src="http://qwl8awpiv.hn-bkt.clouddn.com/Java2-1.png" alt="对象结构"></p><p>由图可见Java对象主要由实例数据、对象头与对其填充构成</p><ul><li>  实例数据：该部分包含了对象所属类的有效信息，即类型以及父类属性等信息</li><li>  对象头：对象头包含两类信息，第一类是对象自身运行时的状态数据，如hashcode、Gc分代年龄、锁状态、偏向线程ID等</li><li>  对齐填充：这部分不是一定存在的，由于Jvm的自动内存管理系统需要对象起始地址必须是8字节的整数倍而产生的这部分，因而该部分仅仅起着占位符的作用。</li></ul><p>此外需要了解的是，32位系统下，类型指针大小为4字节，Mark Word大小为4字节，对象头一共8字节。64位系统下，类型指针大小为8字节，Mark Word大小为8字节，对象投一共16字节。64位系统开启指针压缩的情况下，存放类型指针的大小是4字节，Mark Word大小为8字节，对象头一共12字节。数组长度4字节+数组对象头8字节+数组Mark Word为4字节+对齐4字节=16字节。</p><blockquote><p><strong>注</strong>：静态属性不算在对象的大小之内。</p></blockquote><p>synchronized就是借助了Java对象头里存储的数据来实现的，在jdk1.6之后，还利用对象头对锁进行了进一步优化</p><p>下面是64位系统内Java对象头Mark Word部分的结构</p><p><img src="http://qwl8awpiv.hn-bkt.clouddn.com/Java2-2.png" alt="Mark Word结构"> </p><h2 id="2-基本用法"><a href="#2-基本用法" class="headerlink" title="2.基本用法"></a>2.基本用法</h2><h3 id="2-1-作用在对象上"><a href="#2-1-作用在对象上" class="headerlink" title="2.1. 作用在对象上"></a>2.1. 作用在对象上</h3><p>此时监视器锁是括号中的实例this对象</p><pre><code>public void test() &#123;    synchronized (this) &#123;        System.out.println(&quot;test&quot;);    &#125;&#125;</code></pre><h3 id="2-2-作用在方法上"><a href="#2-2-作用在方法上" class="headerlink" title="2.2. 作用在方法上"></a>2.2. 作用在方法上</h3><p>此时监视器锁是实例对象this</p><pre><code>public synchronized void test() &#123;    System.out.println(&quot;test&quot;);&#125;</code></pre><h3 id="2-3-作用在静态方法上"><a href="#2-3-作用在静态方法上" class="headerlink" title="2.3. 作用在静态方法上"></a>2.3. 作用在静态方法上</h3><p>此时监视器锁是class实例，相当于给整个类全局加锁</p><pre><code>public static synchronized void test() &#123;    System.out.println(&quot;test&quot;);&#125;</code></pre><h2 id="3-底层原理"><a href="#3-底层原理" class="headerlink" title="3. 底层原理"></a>3. 底层原理</h2><p>synchronized锁在底层实现上，简单说它的实现只用了一个状态变量和两个队列，研究过AQS的同学们可能会对这部分有点似曾相识的感觉</p><p>下面这张图基本上可以表现出synchronized锁的大致原理</p><pre><code>图图图图图图</code></pre><p>由图可见整个锁的执行流程由左侧的同步队列、右侧的阻塞队列与中间的获得监视器锁的线程组成，众所周知线程的状态有 新建、就绪、阻塞、运行中、死亡 五个状态，其中三种可以对应到图中，在左侧的同步队列中，是所有等待获取锁资源的线程，它们的状态都是就绪，而在中间的获得监视器锁的线程中，线程的状态必然是运行中的状态，而在右侧的阻塞队列主要作用是线程执行wait方法后，进入阻塞状态的线程将全部放在该队列之中。</p><p>上面说到除了两个队列以外，还有一个状态变量_owner，这个状态变量与AQS所实现的锁中的state变量略为相似，在每次线程加锁前都需要检查这个变量是否为空，如果为空则直接占用锁且状态变量变为占有该锁的线程ID，这也是synchronized锁中可重入锁的加锁过程。</p><p>从底层源码的角度讲，synchronized锁与AQS实现的锁十分相像，除了AQS在实现锁时对阻塞队列进行了改造，使其由多个条件队列实现而成，即我们平时使用的Condition对象，体现在使用上就是AQS实现的锁可以放入不同的阻塞队列进行等待，也可以根据不同情况唤醒不同队列中的阻塞线程</p><h2 id="4-优化方案"><a href="#4-优化方案" class="headerlink" title="4. 优化方案"></a>4. 优化方案</h2><p>在jdk1.6以后，官方对synchronized锁进行了一系列优化，其中主要包括锁升级、锁消除以及锁的粗化，使并发效率在线程竞争不激烈的情况下得到了极大地提升</p><h3 id="4-1-锁升级-锁膨胀"><a href="#4-1-锁升级-锁膨胀" class="headerlink" title="4.1 锁升级(锁膨胀)"></a>4.1 锁升级(锁膨胀)</h3><p>锁升级指的是synchronized锁会按照实际情况，由初始创建时的偏向锁，随着线程竞争激烈程度的提升，逐渐升级为轻量级锁乃至重量级锁的过程，在升级的过程中，加锁的开销也在不断提升，这一过程为不可逆的，因而在线程竞争激烈的情况下如高并发场景下，并不适合于用synchronized锁进行处理。</p><p>下图为锁升级的过程</p><p><img src="http://qwl8awpiv.hn-bkt.clouddn.com/Java2-4.png" alt="锁升级"></p><p>下图为锁升级过程中各个阶段的特性对比</p><pre><code>图图图图图图</code></pre><h4 id="4-1-1-偏向锁"><a href="#4-1-1-偏向锁" class="headerlink" title="4.1.1 偏向锁"></a>4.1.1 偏向锁</h4><p>研究发现，大部分情况下，锁不进不存在多线程竞争，反而经常是同一线程多次获得，为了降低获得锁的代价，引入了偏向锁。偏向锁是针对单线程环境下的加锁情况设计的，借助了对象头中的偏向线程ID的记录信息，标记了首次加锁的线程ID，当该线程进行加锁操作时仅仅需要将线程ID与这一字段比对，相同则成功加锁，这一操作极大减小了加锁操作的开销，且一旦加锁，单线程情况下线程并不会主动释放锁，只有竞争才可以释放锁的机制，偏向锁加锁与释放锁的过程(锁升级过程)大致如下：</p><ul><li>  访问Mark Word中的偏向锁标志位，确认当前锁是否为偏向锁</li><li>  如果是，则检测Mark Word中的线程ID是否为当前线程的ID，如果是则直接执行同步代码，如果不是则需要通过CAS操作竞争锁，成功后需要将Mark Word中的线程ID设置为当前线程ID，并执行同步代码</li><li>  如果CAS获取偏向锁失败，则代表与其他线程存在竞争。则当到达safe point时当前占有偏向锁的线程被挂起，撤销Mark Word中的偏向锁标识，并标记当前锁为轻量级锁，之后被阻塞的线程继续执行同步代码</li></ul><p>偏向锁除了可以减少加锁与释放锁的开销，还可以大量减少CAS的开销。</p><h4 id="4-1-2-轻量级锁"><a href="#4-1-2-轻量级锁" class="headerlink" title="4.1.2 轻量级锁"></a>4.1.2 轻量级锁</h4><p>轻量级锁是锁升级的中间过程，在偏向锁阶段下一旦有当前线程之外的线程对锁进行抢占，则锁会升级到轻量级锁。由于线程的阻塞与唤醒需要CPU从用户态转换为内核态，线程的频繁唤醒与阻塞对CPU来说是一个不小的负担，因而引入了轻量级锁。轻量级锁的实现原理主要是采用了CAS与自旋锁的方式，当A线程抢占到了锁资源后，B对象此时也需要锁，但A还未释放锁，此时B进入了自旋锁的状态，即B以CAS的方式循环请求锁资源，不会进入阻塞状态，执行线程B的CPU可以理解为当前情况下处于空转的状态，直到一定自旋次数后仍然没有获取锁，则会将线程置为挂起状态。自旋锁由Jdk1.4.2引入，自旋的次数是固定的，Jdk6以后又引入了自适应自旋锁，自旋的次数并不固定，而是由前一次在同一个锁上的自旋时间以及锁拥有者的状态来决定的，当一个线程上一次自旋最终获得了锁，则下一次获得锁时自旋的次数会更多一些。</p><h4 id="4-1-3-重量级锁"><a href="#4-1-3-重量级锁" class="headerlink" title="4.1.3 重量级锁"></a>4.1.3 重量级锁</h4><p>重量级锁是锁升级的最终形态，当轻量级锁中的一个线程不断请求加锁，但是另一个线程占用锁资源迟迟没有释放，当锁自旋的状态保持一段时间后会挂起，当这类情况频繁出现的时候，锁就有可能再次升级，成为重量级锁，在重量级锁的状态下，加锁与释放锁时，操作系统需要在用户态与内核态之间切换，因而这个操作开销比较高，高并发场景下会十分影响代码的执行效率</p><h3 id="4-2-锁消除"><a href="#4-2-锁消除" class="headerlink" title="4.2 锁消除"></a>4.2 锁消除</h3><p>在一些情况下，代码执行的操作不需要加锁，但是代码中却有加锁的操作，此时Jvm会对代码进行锁消除的优化，去掉这部分的锁同步操作，这一优化的原理是基于线程内数据的逃逸分析来实现的</p><h3 id="4-3-锁粗化"><a href="#4-3-锁粗化" class="headerlink" title="4.3 锁粗化"></a>4.3 锁粗化</h3><p>在同一片代码区域内，执行了一系列连续加锁的操作，并且加锁操作的监视器为同一个，那么这时Jvm就会对这段代码进行锁粗化的处理，简而言之就是将这一段代码中的多个锁连在一起，形成一个大范围的锁，避免了频繁加锁与释放锁的操作所造成的性能损耗</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java并发</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>并发编程</tag>
+      
+      <tag>锁</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Java常用数据结构</title>
+    <link href="/2021/07/18/java-ji-chu/java-shu-ju-jie-gou/"/>
+    <url>/2021/07/18/java-ji-chu/java-shu-ju-jie-gou/</url>
+    
+    <content type="html"><![CDATA[<meta name="referrer" content="no-referrer"/><p>Java数据结构很多，常用的并不多，本篇主要就其中常接触到的原理与细节做一点总结(不含并发容器)</p><h2 id="1-数组"><a href="#1-数组" class="headerlink" title="1.数组"></a>1.数组</h2><h3 id="1-1-ArrayList-1-8"><a href="#1-1-ArrayList-1-8" class="headerlink" title="1.1.ArrayList 1.8"></a>1.1.ArrayList 1.8</h3><p>数组列表，底层实现主要是object数组，基本特点是查询效率高，增删效率低，内存连续，不是线程安全的数据结构。</p><p>ArrayList刚开始不会初始化数组大小，初始大小为0，开始add时才会默认分配10的初始大小，即使我们在初始化时赋值给它，初始大小依然为0，因为它的size()方法是用size变量单独表示的，只代表列表中拥有的元素个数，不是真正的数组大小。</p><p>扩容：<br>扩容的大小为原先大小的1.5倍(扩容因子 = 1.5)，位运算右移一位加上原数组的大小，扩容完成后将数组原有元素拷贝至新数组中，再加上新元素。加载因子为1，意味着当元素填满数组时才会进行扩容。</p><p>增删改查：</p><ul><li><p><strong>增</strong>：中间增加需要后移后面的元素，可能还需要扩容</p></li><li><p><strong>删</strong>：需要前移删除元素后的元素</p></li><li><p><strong>改</strong>：找到索引位置直接修改</p></li><li><p><strong>查</strong>：找到索引位置直接返回</p></li></ul><blockquote><p><strong>注</strong>：增删正常为o(n)复杂度，但是对最后的元素操作则为O(1)复杂度，改查均为o(1)复杂度</p></blockquote><h3 id="1-2-LinkedList"><a href="#1-2-LinkedList" class="headerlink" title="1.2.LinkedList"></a>1.2.LinkedList</h3><p>链表实现的列表，与前者相比主要是增删均为O(1)，改查O(n)，每次添加元素都是在列表后新加一个新的节点，且内存不是连续的。</p><h3 id="1-3-Vector"><a href="#1-3-Vector" class="headerlink" title="1.3.Vector"></a>1.3.Vector</h3><p>同步容器，线程安全的数据结构，所有的公有方法全部都有synchronized修饰，可以在多线程场景中 单独 使用它的方法，遇到复合操作(非原子操作)就会翻车，需要在外部主动加锁解决该问题。</p><p>此外，它的加锁粒度很大，每次都会锁住整个数据结构，且不区分读写，即使get与add两个方法也要顺序执行，大大降低了容器的并发能力。</p><h2 id="2-Map"><a href="#2-Map" class="headerlink" title="2.Map"></a>2.Map</h2><h3 id="2-1-HashMap-1-7-1-8"><a href="#2-1-HashMap-1-7-1-8" class="headerlink" title="2.1.HashMap(1.7/1.8)"></a>2.1.HashMap(1.7/1.8)</h3><p>线程不安全的K-V数据结构，主要由数组和链表实现的，对于冲突的解决采用拉链法，初始容量为16，K与V均可以为null。</p><h4 id="1-7版本-仅包含部分与1-8相比较的点"><a href="#1-7版本-仅包含部分与1-8相比较的点" class="headerlink" title="1.7版本:(仅包含部分与1.8相比较的点)"></a>1.7版本:(仅包含部分与1.8相比较的点)</h4><p>主要由Entry来实现的，没有链表转红黑树的优化操作</p><p>扩容：<br>插入由头插法实现，并发情况下会产生死循环或数据丢失的问题，两个线程同时检测到容量不足，对HashMap进行扩容操作，A线程先完成了扩容，此时B线程开始扩容，头插法会导致B线程将A已经分配好的节点再次进行遍历与转移，此时会形成一个环形结构。节点转移的位置与1.8相同，都是将原先位置的半数元素转移到当前的位置*2的位置，扩容大小也相同都为当前数组大小的2倍。</p><h4 id="1-8版本"><a href="#1-8版本" class="headerlink" title="1.8版本:"></a>1.8版本:</h4><p>主要由Node来实现的，当某一数组节点下的链表长度到达8时会将链表进行树化为红黑树便于查找，减少到6时又会退化回链表。</p><p>扩容：<br>扩容因子为2，每次扩容都为当前数组大小的2倍，会将数组元素的一半链表节点以尾插法的方式转移到原先2倍位置的数组元素下。不支持缩容。</p><p>此外扩容2倍的原因主要是因为整数与2的整数幂次减一做&amp;运算可以当做取模来看，加速了hash函数的运算，也会减少很多冲突，尽量实现均匀分布，在初始化时也会遵循这一特点，开始如果设置的大小不是2的整数幂次，则会自动将初始大小设置为大于用户设置的大小的最小2的整数次幂。</p><p>加载因子：<br>0.75，即每次到达现在大小的四分之三即可开始扩容。取值0.75是一个时间与空间上的折中方案，过低的话虽然冲突会变少，但是会导致频繁扩容，且空间利用率很低的情况，过高的话虽然提高了空间利用率，也降低了扩容频率，但是会导致查询冲突概率很高。</p><p>哈希计算：<br>取模，位运算</p><h3 id="2-2-HashTable"><a href="#2-2-HashTable" class="headerlink" title="2.2.HashTable"></a>2.2.HashTable</h3><p>线程安全的K-V结构，由Dictionary实现的。利用synchronized对数据结构整体进行加锁，并发效率低。</p><p>与HashMap相比，它的K与V都不可以为null，HashTable没有对null值进行特殊处理，加入null时会报空。</p><p>K与V不可以为null的原因是：<br>HashTable的实现一部分采用了Fail-safe机制(Enumerator是，Iterator不是)，这种机制读取出的数据不一定是最新的数据，如果使用null值会使得其无法判断对应的key是不存在还是为空。</p><p>此外HashTable扩容为当前容量翻倍+1，初始容量为11，负载因子默认都是0.75</p><h3 id="2-3-TreeMap"><a href="#2-3-TreeMap" class="headerlink" title="2.3.TreeMap"></a>2.3.TreeMap</h3><p>利用红黑树实现的K-V结构，可以对节点进行排序，线程不安全。</p><h2 id="3-其他"><a href="#3-其他" class="headerlink" title="3.其他"></a>3.其他</h2><h3 id="3-1-HashSet"><a href="#3-1-HashSet" class="headerlink" title="3.1.HashSet"></a>3.1.HashSet</h3><p>由HashMap实现</p><h3 id="3-2-Queue、Deque、Stack"><a href="#3-2-Queue、Deque、Stack" class="headerlink" title="3.2.Queue、Deque、Stack"></a>3.2.Queue、Deque、Stack</h3><p>Queue：队列，尾进头出</p><p>Deque：双向队列，头尾都可以进出</p><p>Stack：先进后出，由Vector实现，大量操作需要加锁，效率较低，通常使用LinkedList实现的Deque代替</p><h3 id="3-3-PriorityQueue"><a href="#3-3-PriorityQueue" class="headerlink" title="3.3.PriorityQueue"></a>3.3.PriorityQueue</h3><p>带有优先级的队列，由堆实现，可以自定义优先级。</p><blockquote><p><strong>注</strong>：一时想不起那么多的要点，后续可能还会更新</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>Java基础</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>数据结构</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="/2021/07/05/hello-world/"/>
+    <url>/2021/07/05/hello-world/</url>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash">$ hexo new <span class="hljs-string"><code class="language-hljs bash">$ hexo new <span class="hljs-string">"My New Post"</span><br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash"><code class="language-hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash"><code class="language-hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash"><code class="language-hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>

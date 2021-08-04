@@ -15,10 +15,10 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="description" content="若没有甘安于现状的心态，则要有逆流而上的勇气">
-  <meta name="author" content="Small funny">
+  <meta name="author" content="small funny">
   <meta name="keywords" content="贾晗誉,Small funny">
   
-  <title>Hello World - Small funny 的个人网站</title>
+  <title>Java常用数据结构 - Small funny 的个人网站</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Hello World">
+            <span class="h2" id="subtitle" title="Java常用数据结构">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-07-05 16:58" pubdate>
-        2021年7月5日 下午
+      <time datetime="2021-07-18 10:00" pubdate>
+        2021年7月18日 上午
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      75 字
+      1.5k 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      15
        分钟
     </span>
   
@@ -225,28 +225,75 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Hello World</h1>
+            <h1 style="display: none">Java常用数据结构</h1>
             
             <div class="markdown-body">
-              <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash">$ hexo new <span class="hljs-string"><code class="language-hljs bash">$ hexo new <span class="hljs-string">"My New Post"</span><br></code></pre></td></tr></table></figure>
+              <meta name="referrer" content="no-referrer"/>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash"><code class="language-hljs bash">$ hexo server<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash"><code class="language-hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre class=" language-hljs bash"><code class="language-hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p>Java数据结构很多，常用的并不多，本篇主要就其中常接触到的原理与细节做一点总结(不含并发容器)</p>
+<h2 id="1-数组"><a href="#1-数组" class="headerlink" title="1.数组"></a>1.数组</h2><h3 id="1-1-ArrayList-1-8"><a href="#1-1-ArrayList-1-8" class="headerlink" title="1.1.ArrayList 1.8"></a>1.1.ArrayList 1.8</h3><p>数组列表，底层实现主要是object数组，基本特点是查询效率高，增删效率低，内存连续，不是线程安全的数据结构。</p>
+<p>ArrayList刚开始不会初始化数组大小，初始大小为0，开始add时才会默认分配10的初始大小，即使我们在初始化时赋值给它，初始大小依然为0，因为它的size()方法是用size变量单独表示的，只代表列表中拥有的元素个数，不是真正的数组大小。</p>
+<p>扩容：<br>扩容的大小为原先大小的1.5倍(扩容因子 = 1.5)，位运算右移一位加上原数组的大小，扩容完成后将数组原有元素拷贝至新数组中，再加上新元素。加载因子为1，意味着当元素填满数组时才会进行扩容。</p>
+<p>增删改查：</p>
+<ul>
+<li><p><strong>增</strong>：中间增加需要后移后面的元素，可能还需要扩容</p>
+</li>
+<li><p><strong>删</strong>：需要前移删除元素后的元素</p>
+</li>
+<li><p><strong>改</strong>：找到索引位置直接修改</p>
+</li>
+<li><p><strong>查</strong>：找到索引位置直接返回</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>注</strong>：增删正常为o(n)复杂度，但是对最后的元素操作则为O(1)复杂度，改查均为o(1)复杂度</p>
+</blockquote>
+<h3 id="1-2-LinkedList"><a href="#1-2-LinkedList" class="headerlink" title="1.2.LinkedList"></a>1.2.LinkedList</h3><p>链表实现的列表，与前者相比主要是增删均为O(1)，改查O(n)，每次添加元素都是在列表后新加一个新的节点，且内存不是连续的。</p>
+<h3 id="1-3-Vector"><a href="#1-3-Vector" class="headerlink" title="1.3.Vector"></a>1.3.Vector</h3><p>同步容器，线程安全的数据结构，所有的公有方法全部都有synchronized修饰，可以在多线程场景中 单独 使用它的方法，遇到复合操作(非原子操作)就会翻车，需要在外部主动加锁解决该问题。</p>
+<p>此外，它的加锁粒度很大，每次都会锁住整个数据结构，且不区分读写，即使get与add两个方法也要顺序执行，大大降低了容器的并发能力。</p>
+<h2 id="2-Map"><a href="#2-Map" class="headerlink" title="2.Map"></a>2.Map</h2><h3 id="2-1-HashMap-1-7-1-8"><a href="#2-1-HashMap-1-7-1-8" class="headerlink" title="2.1.HashMap(1.7/1.8)"></a>2.1.HashMap(1.7/1.8)</h3><p>线程不安全的K-V数据结构，主要由数组和链表实现的，对于冲突的解决采用拉链法，初始容量为16，K与V均可以为null。</p>
+<h4 id="1-7版本-仅包含部分与1-8相比较的点"><a href="#1-7版本-仅包含部分与1-8相比较的点" class="headerlink" title="1.7版本:(仅包含部分与1.8相比较的点)"></a>1.7版本:(仅包含部分与1.8相比较的点)</h4><p>主要由Entry来实现的，没有链表转红黑树的优化操作</p>
+<p>扩容：<br>插入由头插法实现，并发情况下会产生死循环或数据丢失的问题，两个线程同时检测到容量不足，对HashMap进行扩容操作，A线程先完成了扩容，此时B线程开始扩容，头插法会导致B线程将A已经分配好的节点再次进行遍历与转移，此时会形成一个环形结构。节点转移的位置与1.8相同，都是将原先位置的半数元素转移到当前的位置*2的位置，扩容大小也相同都为当前数组大小的2倍。</p>
+<h4 id="1-8版本"><a href="#1-8版本" class="headerlink" title="1.8版本:"></a>1.8版本:</h4><p>主要由Node来实现的，当某一数组节点下的链表长度到达8时会将链表进行树化为红黑树便于查找，减少到6时又会退化回链表。</p>
+<p>扩容：<br>扩容因子为2，每次扩容都为当前数组大小的2倍，会将数组元素的一半链表节点以尾插法的方式转移到原先2倍位置的数组元素下。不支持缩容。</p>
+<p>此外扩容2倍的原因主要是因为整数与2的整数幂次减一做&amp;运算可以当做取模来看，加速了hash函数的运算，也会减少很多冲突，尽量实现均匀分布，在初始化时也会遵循这一特点，开始如果设置的大小不是2的整数幂次，则会自动将初始大小设置为大于用户设置的大小的最小2的整数次幂。</p>
+<p>加载因子：<br>0.75，即每次到达现在大小的四分之三即可开始扩容。取值0.75是一个时间与空间上的折中方案，过低的话虽然冲突会变少，但是会导致频繁扩容，且空间利用率很低的情况，过高的话虽然提高了空间利用率，也降低了扩容频率，但是会导致查询冲突概率很高。</p>
+<p>哈希计算：<br>取模，位运算</p>
+<h3 id="2-2-HashTable"><a href="#2-2-HashTable" class="headerlink" title="2.2.HashTable"></a>2.2.HashTable</h3><p>线程安全的K-V结构，由Dictionary实现的。利用synchronized对数据结构整体进行加锁，并发效率低。</p>
+<p>与HashMap相比，它的K与V都不可以为null，HashTable没有对null值进行特殊处理，加入null时会报空。</p>
+<p>K与V不可以为null的原因是：<br>HashTable的实现一部分采用了Fail-safe机制(Enumerator是，Iterator不是)，这种机制读取出的数据不一定是最新的数据，如果使用null值会使得其无法判断对应的key是不存在还是为空。</p>
+<p>此外HashTable扩容为当前容量翻倍+1，初始容量为11，负载因子默认都是0.75</p>
+<h3 id="2-3-TreeMap"><a href="#2-3-TreeMap" class="headerlink" title="2.3.TreeMap"></a>2.3.TreeMap</h3><p>利用红黑树实现的K-V结构，可以对节点进行排序，线程不安全。</p>
+<h2 id="3-其他"><a href="#3-其他" class="headerlink" title="3.其他"></a>3.其他</h2><h3 id="3-1-HashSet"><a href="#3-1-HashSet" class="headerlink" title="3.1.HashSet"></a>3.1.HashSet</h3><p>由HashMap实现</p>
+<h3 id="3-2-Queue、Deque、Stack"><a href="#3-2-Queue、Deque、Stack" class="headerlink" title="3.2.Queue、Deque、Stack"></a>3.2.Queue、Deque、Stack</h3><p>Queue：队列，尾进头出</p>
+<p>Deque：双向队列，头尾都可以进出</p>
+<p>Stack：先进后出，由Vector实现，大量操作需要加锁，效率较低，通常使用LinkedList实现的Deque代替</p>
+<h3 id="3-3-PriorityQueue"><a href="#3-3-PriorityQueue" class="headerlink" title="3.3.PriorityQueue"></a>3.3.PriorityQueue</h3><p>带有优先级的队列，由堆实现，可以自定义优先级。</p>
+<blockquote>
+<p><strong>注</strong>：一时想不起那么多的要点，后续可能还会更新</p>
+</blockquote>
 
             </div>
             <hr>
             <div>
               <div class="post-metas mb-3">
                 
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Java/">Java</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+                    
+                  </div>
                 
               </div>
               
@@ -261,15 +308,21 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/07/18/java-ji-chu/java-shu-ju-jie-gou/">
+                      <a href="/2021/07/31/java-bing-fa/synchornized-suo/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Java常用数据结构</span>
+                        <span class="hidden-mobile">synchronized锁</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2021/07/05/hello-world/">
+                        <span class="hidden-mobile">Hello World</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>

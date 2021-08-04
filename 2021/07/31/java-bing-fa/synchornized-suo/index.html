@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="若没有甘安于现状的心态，则要有逆流而上的勇气">
+  <meta name="author" content="small funny">
+  <meta name="keywords" content="贾晗誉,Small funny">
+  
+  <title>synchronized锁 - Small funny 的个人网站</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Small Funny</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="synchronized锁">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-07-31 16:00" pubdate>
+        2021年7月31日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">synchronized锁</h1>
+            
+            <div class="markdown-body">
+              <meta name="referrer" content="no-referrer"/>
+
+<p>synchronized是Java中的关键字，由底层C/C++实现，本文大致记录一下个人对这个关键字的见解与学习记录</p>
+<h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h2><p>synchronized，它可以保证线程安全中的原子性、可见性与有序性。</p>
+<p>该锁属于可重入锁，也属于重量级锁，在jdk1.5之前相对于aqs实现的lock来说，加锁的资源消耗要大很多，在后来的优化中，它的效率也在不断提升，编码中我们仍然优先使用这种锁进行多线程场景下的操作</p>
+<p>它的加锁基本原理是将任何一个非空对象设置为一个监视器，对作用域内的代码进行“监视”，也称为监视器锁</p>
+<p>Java对象之所以能够被设置为监视器，主要源于它的结构特点</p>
+<p><img src="http://qwl8awpiv.hn-bkt.clouddn.com/Java2-1.png" srcset="/img/loading.gif" lazyload alt="对象结构"></p>
+<p>由图可见Java对象主要由实例数据、对象头与对其填充构成</p>
+<ul>
+<li>  实例数据：该部分包含了对象所属类的有效信息，即类型以及父类属性等信息</li>
+<li>  对象头：对象头包含两类信息，第一类是对象自身运行时的状态数据，如hashcode、Gc分代年龄、锁状态、偏向线程ID等</li>
+<li>  对齐填充：这部分不是一定存在的，由于Jvm的自动内存管理系统需要对象起始地址必须是8字节的整数倍而产生的这部分，因而该部分仅仅起着占位符的作用。</li>
+</ul>
+<p>此外需要了解的是，32位系统下，类型指针大小为4字节，Mark Word大小为4字节，对象头一共8字节。64位系统下，类型指针大小为8字节，Mark Word大小为8字节，对象投一共16字节。64位系统开启指针压缩的情况下，存放类型指针的大小是4字节，Mark Word大小为8字节，对象头一共12字节。数组长度4字节+数组对象头8字节+数组Mark Word为4字节+对齐4字节=16字节。</p>
+<blockquote>
+<p><strong>注</strong>：静态属性不算在对象的大小之内。</p>
+</blockquote>
+<p>synchronized就是借助了Java对象头里存储的数据来实现的，在jdk1.6之后，还利用对象头对锁进行了进一步优化</p>
+<p>下面是64位系统内Java对象头Mark Word部分的结构</p>
+<p><img src="http://qwl8awpiv.hn-bkt.clouddn.com/Java2-2.png" srcset="/img/loading.gif" lazyload alt="Mark Word结构"> </p>
+<h2 id="2-基本用法"><a href="#2-基本用法" class="headerlink" title="2.基本用法"></a>2.基本用法</h2><h3 id="2-1-作用在对象上"><a href="#2-1-作用在对象上" class="headerlink" title="2.1. 作用在对象上"></a>2.1. 作用在对象上</h3><p>此时监视器锁是括号中的实例this对象</p>
+<pre><code>public void test() &#123;
+    synchronized (this) &#123;
+        System.out.println(&quot;test&quot;);
+    &#125;
+&#125;
+</code></pre>
+<h3 id="2-2-作用在方法上"><a href="#2-2-作用在方法上" class="headerlink" title="2.2. 作用在方法上"></a>2.2. 作用在方法上</h3><p>此时监视器锁是实例对象this</p>
+<pre><code>public synchronized void test() &#123;
+    System.out.println(&quot;test&quot;);
+&#125;
+</code></pre>
+<h3 id="2-3-作用在静态方法上"><a href="#2-3-作用在静态方法上" class="headerlink" title="2.3. 作用在静态方法上"></a>2.3. 作用在静态方法上</h3><p>此时监视器锁是class实例，相当于给整个类全局加锁</p>
+<pre><code>public static synchronized void test() &#123;
+    System.out.println(&quot;test&quot;);
+&#125;
+</code></pre>
+<h2 id="3-底层原理"><a href="#3-底层原理" class="headerlink" title="3. 底层原理"></a>3. 底层原理</h2><p>synchronized锁在底层实现上，简单说它的实现只用了一个状态变量和两个队列，研究过AQS的同学们可能会对这部分有点似曾相识的感觉</p>
+<p>下面这张图基本上可以表现出synchronized锁的大致原理</p>
+<pre><code>图图图图图图
+</code></pre>
+<p>由图可见整个锁的执行流程由左侧的同步队列、右侧的阻塞队列与中间的获得监视器锁的线程组成，众所周知线程的状态有 新建、就绪、阻塞、运行中、死亡 五个状态，其中三种可以对应到图中，在左侧的同步队列中，是所有等待获取锁资源的线程，它们的状态都是就绪，而在中间的获得监视器锁的线程中，线程的状态必然是运行中的状态，而在右侧的阻塞队列主要作用是线程执行wait方法后，进入阻塞状态的线程将全部放在该队列之中。</p>
+<p>上面说到除了两个队列以外，还有一个状态变量_owner，这个状态变量与AQS所实现的锁中的state变量略为相似，在每次线程加锁前都需要检查这个变量是否为空，如果为空则直接占用锁且状态变量变为占有该锁的线程ID，这也是synchronized锁中可重入锁的加锁过程。</p>
+<p>从底层源码的角度讲，synchronized锁与AQS实现的锁十分相像，除了AQS在实现锁时对阻塞队列进行了改造，使其由多个条件队列实现而成，即我们平时使用的Condition对象，体现在使用上就是AQS实现的锁可以放入不同的阻塞队列进行等待，也可以根据不同情况唤醒不同队列中的阻塞线程</p>
+<h2 id="4-优化方案"><a href="#4-优化方案" class="headerlink" title="4. 优化方案"></a>4. 优化方案</h2><p>在jdk1.6以后，官方对synchronized锁进行了一系列优化，其中主要包括锁升级、锁消除以及锁的粗化，使并发效率在线程竞争不激烈的情况下得到了极大地提升</p>
+<h3 id="4-1-锁升级-锁膨胀"><a href="#4-1-锁升级-锁膨胀" class="headerlink" title="4.1 锁升级(锁膨胀)"></a>4.1 锁升级(锁膨胀)</h3><p>锁升级指的是synchronized锁会按照实际情况，由初始创建时的偏向锁，随着线程竞争激烈程度的提升，逐渐升级为轻量级锁乃至重量级锁的过程，在升级的过程中，加锁的开销也在不断提升，这一过程为不可逆的，因而在线程竞争激烈的情况下如高并发场景下，并不适合于用synchronized锁进行处理。</p>
+<p>下图为锁升级的过程</p>
+<p><img src="http://qwl8awpiv.hn-bkt.clouddn.com/Java2-4.png" srcset="/img/loading.gif" lazyload alt="锁升级"></p>
+<p>下图为锁升级过程中各个阶段的特性对比</p>
+<pre><code>图图图图图图
+</code></pre>
+<h4 id="4-1-1-偏向锁"><a href="#4-1-1-偏向锁" class="headerlink" title="4.1.1 偏向锁"></a>4.1.1 偏向锁</h4><p>研究发现，大部分情况下，锁不进不存在多线程竞争，反而经常是同一线程多次获得，为了降低获得锁的代价，引入了偏向锁。偏向锁是针对单线程环境下的加锁情况设计的，借助了对象头中的偏向线程ID的记录信息，标记了首次加锁的线程ID，当该线程进行加锁操作时仅仅需要将线程ID与这一字段比对，相同则成功加锁，这一操作极大减小了加锁操作的开销，且一旦加锁，单线程情况下线程并不会主动释放锁，只有竞争才可以释放锁的机制，偏向锁加锁与释放锁的过程(锁升级过程)大致如下：</p>
+<ul>
+<li>  访问Mark Word中的偏向锁标志位，确认当前锁是否为偏向锁</li>
+<li>  如果是，则检测Mark Word中的线程ID是否为当前线程的ID，如果是则直接执行同步代码，如果不是则需要通过CAS操作竞争锁，成功后需要将Mark Word中的线程ID设置为当前线程ID，并执行同步代码</li>
+<li>  如果CAS获取偏向锁失败，则代表与其他线程存在竞争。则当到达safe point时当前占有偏向锁的线程被挂起，撤销Mark Word中的偏向锁标识，并标记当前锁为轻量级锁，之后被阻塞的线程继续执行同步代码</li>
+</ul>
+<p>偏向锁除了可以减少加锁与释放锁的开销，还可以大量减少CAS的开销。</p>
+<h4 id="4-1-2-轻量级锁"><a href="#4-1-2-轻量级锁" class="headerlink" title="4.1.2 轻量级锁"></a>4.1.2 轻量级锁</h4><p>轻量级锁是锁升级的中间过程，在偏向锁阶段下一旦有当前线程之外的线程对锁进行抢占，则锁会升级到轻量级锁。由于线程的阻塞与唤醒需要CPU从用户态转换为内核态，线程的频繁唤醒与阻塞对CPU来说是一个不小的负担，因而引入了轻量级锁。轻量级锁的实现原理主要是采用了CAS与自旋锁的方式，当A线程抢占到了锁资源后，B对象此时也需要锁，但A还未释放锁，此时B进入了自旋锁的状态，即B以CAS的方式循环请求锁资源，不会进入阻塞状态，执行线程B的CPU可以理解为当前情况下处于空转的状态，直到一定自旋次数后仍然没有获取锁，则会将线程置为挂起状态。自旋锁由Jdk1.4.2引入，自旋的次数是固定的，Jdk6以后又引入了自适应自旋锁，自旋的次数并不固定，而是由前一次在同一个锁上的自旋时间以及锁拥有者的状态来决定的，当一个线程上一次自旋最终获得了锁，则下一次获得锁时自旋的次数会更多一些。</p>
+<h4 id="4-1-3-重量级锁"><a href="#4-1-3-重量级锁" class="headerlink" title="4.1.3 重量级锁"></a>4.1.3 重量级锁</h4><p>重量级锁是锁升级的最终形态，当轻量级锁中的一个线程不断请求加锁，但是另一个线程占用锁资源迟迟没有释放，当锁自旋的状态保持一段时间后会挂起，当这类情况频繁出现的时候，锁就有可能再次升级，成为重量级锁，在重量级锁的状态下，加锁与释放锁时，操作系统需要在用户态与内核态之间切换，因而这个操作开销比较高，高并发场景下会十分影响代码的执行效率</p>
+<h3 id="4-2-锁消除"><a href="#4-2-锁消除" class="headerlink" title="4.2 锁消除"></a>4.2 锁消除</h3><p>在一些情况下，代码执行的操作不需要加锁，但是代码中却有加锁的操作，此时Jvm会对代码进行锁消除的优化，去掉这部分的锁同步操作，这一优化的原理是基于线程内数据的逃逸分析来实现的</p>
+<h3 id="4-3-锁粗化"><a href="#4-3-锁粗化" class="headerlink" title="4.3 锁粗化"></a>4.3 锁粗化</h3><p>在同一片代码区域内，执行了一系列连续加锁的操作，并且加锁操作的监视器为同一个，那么这时Jvm就会对这段代码进行锁粗化的处理，简而言之就是将这一段代码中的多个锁连在一起，形成一个大范围的锁，避免了频繁加锁与释放锁的操作所造成的性能损耗</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Java%E5%B9%B6%E5%8F%91/">Java并发</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Java/">Java</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">并发编程</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E9%94%81/">锁</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/18/java-ji-chu/java-shu-ju-jie-gou/">
+                        <span class="hidden-mobile">Java常用数据结构</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
