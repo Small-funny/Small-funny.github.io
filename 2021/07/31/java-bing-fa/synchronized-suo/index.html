@@ -235,7 +235,7 @@
 <p>该锁属于可重入锁，也属于重量级锁，在jdk1.5之前相对于aqs实现的lock来说，加锁的资源消耗要大很多，在后来的优化中，它的效率也在不断提升，编码中我们仍然优先使用这种锁进行多线程场景下的操作</p>
 <p>它的加锁基本原理是将任何一个非空对象设置为一个监视器，对作用域内的代码进行“监视”，也称为监视器锁</p>
 <p>Java对象之所以能够被设置为监视器，主要源于它的结构特点</p>
-<p><img src="synchornized%E9%94%81/Java2-1.png" srcset="/img/loading.gif" lazyload alt="对象结构"></p>
+<p><img src="Java2-1.png" srcset="/img/loading.gif" lazyload alt="对象结构"></p>
 <p>由图可见Java对象主要由实例数据、对象头与对其填充构成</p>
 <ul>
 <li>  实例数据：该部分包含了对象所属类的有效信息，即类型以及父类属性等信息</li>
@@ -248,7 +248,7 @@
 </blockquote>
 <p>synchronized就是借助了Java对象头里存储的数据来实现的，在jdk1.6之后，还利用对象头对锁进行了进一步优化</p>
 <p>下面是64位系统内Java对象头Mark Word部分的结构</p>
-<p><img src="synchornized%E9%94%81/Java2-2.png" srcset="/img/loading.gif" lazyload alt="Mark Word结构"> </p>
+<p><img src="Java2-2.png" srcset="/img/loading.gif" lazyload alt="Mark Word结构"> </p>
 <h2 id="2-基本用法"><a href="#2-基本用法" class="headerlink" title="2.基本用法"></a>2.基本用法</h2><h3 id="2-1-作用在对象上"><a href="#2-1-作用在对象上" class="headerlink" title="2.1. 作用在对象上"></a>2.1. 作用在对象上</h3><p>此时监视器锁是括号中的实例this对象</p>
 <pre><code>public void test() &#123;
     synchronized (this) &#123;
@@ -276,7 +276,7 @@
 <h2 id="4-优化方案"><a href="#4-优化方案" class="headerlink" title="4. 优化方案"></a>4. 优化方案</h2><p>在jdk1.6以后，官方对synchronized锁进行了一系列优化，其中主要包括锁升级、锁消除以及锁的粗化，使并发效率在线程竞争不激烈的情况下得到了极大地提升</p>
 <h3 id="4-1-锁升级-锁膨胀"><a href="#4-1-锁升级-锁膨胀" class="headerlink" title="4.1 锁升级(锁膨胀)"></a>4.1 锁升级(锁膨胀)</h3><p>锁升级指的是synchronized锁会按照实际情况，由初始创建时的偏向锁，随着线程竞争激烈程度的提升，逐渐升级为轻量级锁乃至重量级锁的过程，在升级的过程中，加锁的开销也在不断提升，这一过程为不可逆的，因而在线程竞争激烈的情况下如高并发场景下，并不适合于用synchronized锁进行处理。</p>
 <p>下图为锁升级的过程</p>
-<p><img src="synchornized%E9%94%81/Java2-4.png" srcset="/img/loading.gif" lazyload alt="锁升级"></p>
+<p><img src="Java2-4.png" srcset="/img/loading.gif" lazyload alt="锁升级"></p>
 <p>下图为锁升级过程中各个阶段的特性对比</p>
 <pre><code>图图图图图图
 </code></pre>
