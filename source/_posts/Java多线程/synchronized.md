@@ -2,11 +2,11 @@
 title: synchronized
 date: 2021-07-31 16:00:00
 author: small funny
-img: 
-categories: Java并发
+index_img: img/Java2.png
+categories: Java多线程
 tags:
   - Java
-  - 并发编程
+  - 多线程
   - 锁
 ---
 <meta name="referrer" content="no-referrer"/>
