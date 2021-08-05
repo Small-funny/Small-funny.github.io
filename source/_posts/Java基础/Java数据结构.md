@@ -1,13 +1,14 @@
 ---
-title: Java常用数据结构
+title: Java数据结构(未完)
 date: 2021-07-18 10:00:00
 author: small funny
-img: http://qwl8awpiv.hn-bkt.clouddn.com/Java1-1.png
+index_img: img/Java1.png
 categories: Java基础
 tags:
   - Java
   - 数据结构
 ---
+<meta name="referrer" content="no-referrer"/>
 
 Java数据结构很多，常用的并不多，本篇主要就其中常接触到的原理与细节做一点总结(不含并发容器)
 

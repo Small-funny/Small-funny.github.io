@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Small funny 的个人网站
+title: Small funny
 subtitle: Small funny
 description: 若没有甘安于现状的心态，则要有逆流而上的勇气
 keywords: 贾晗誉,Small funny
@@ -40,7 +40,7 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
